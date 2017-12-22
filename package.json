@@ -1,0 +1,29 @@
+{
+  "name": "discrete-signals",
+  "version": "0.0.1",
+  "description": "Reactive programming with discrete signals and functions",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "common-readme": "^1.1.0",
+    "dependency-check": "^2.9.2",
+    "standard": "^10.0.3",
+    "tape": "^4.8.0"
+  },
+  "bugs": {
+    "url": "https://github.com/jayrbolton/discrete-signals/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jayrbolton/discrete-signals.git"
+  },
+  "scripts": {
+    "test": "dependency-check package.json && standard && node test/"
+  },
+  "keywords": [],
+  "author": "jayrbolton <jayrbolton@protonmail.com>",
+  "license": "MIT"
+}
