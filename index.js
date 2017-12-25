@@ -1,11 +1,7 @@
 module.exports = {}
 
-// TODO
-// - figure out bus system with named channels
 // - figure out flat-mapping -- make a source data callback function?
 //   - how to do a single signal that goes [click -> loading -> ajax -> response -> done]
-//   - can wire one signal to many, and many to one
-//   - maybe just chain any order by name: [{receives: submit, sends: response, handle: x}, ...]
 
 module.exports.signal = signal
 function signal (config) {
