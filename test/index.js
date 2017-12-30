@@ -1,69 +1,72 @@
 var test = require('tape')
-var {combine, run, compose, signal} = require('..')
+var bloop = require('..')
 
 test('debounce example', t => {
-  // Output true when events happen at least 100ms apart
-  var debounce = signal({
-    base: false,
-    output: (n, state) => state.ts[n] - state.ts[n - 1] > 100
+  // Output when events happen at least 10ms apart
+  var debounce = bloop.signal({
+    filter: (n, state) => state.ts[n] - state.ts[n - 1] > 10
   })
   // Sum of inputs
-  var sum = signal({
-    base: 0,
-    output: (n, state) => state.output[n - 1] + Number(state.input[n])
+  var sum = bloop.signal({
+    start: 0,
+    output: (n, state) => state.output[n - 1] + 1
   })
-  var debounceSum = compose(debounce, sum)
+  var debounceSum = bloop.compose(debounce, sum)
+  var accum = []
 
-  run(debounceSum,
+  bloop.run(debounceSum,
     function (input) {
       input('a')
       setTimeout(function () {
         input('b')
-        input('c')
+        input('b')
         setTimeout(function () {
-          input('d')
-          input('e')
+          input('c')
+          input('c')
           setTimeout(function () {
-            input('f')
-            input('g')
+            input('d')
+            input('d')
+            t.deepEqual(accum, [1, 2, 3, 4])
             t.end()
-          }, 1000)
-        }, 1000)
-      }, 1000)
+          }, 20)
+        }, 20)
+      }, 20)
     },
     function (output) {
-      output(function (val) {
-        console.log('got output!', val)
+      output(function (n, state) {
+        accum.push(state.output[n])
       })
     }
   )
 })
 
 test('aggregation example', t => {
-  var incr = signal({
+  var incr = bloop.signal({
     output: () => { return (n) => n + 1 }
   })
-  var decr = signal({
+  var decr = bloop.signal({
     output: () => { return (n) => n - 1 }
   })
-  var reset = signal({
+  var reset = bloop.signal({
     output: () => { return () => 0 }
   })
-  var sum = combine({
-    base: 0,
+  var sum = bloop.combine({
+    start: 0,
     sources: {incr, decr, reset}
   })
-  run(sum,
+  var accum = []
+  bloop.run(sum,
     function (input) {
       input({incr: true})
       input({incr: true})
       input({decr: true})
       input({reset: true})
+      t.deepEqual(accum, [1, 2, 1, 0])
       t.end()
     },
     function (output) {
-      output(function (val) {
-        console.log('got output', val)
+      output(function (n, state) {
+        accum.push(state.output[n])
       })
     }
   )
